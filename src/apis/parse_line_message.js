@@ -56,17 +56,30 @@ async function parseLineMessage() {
         body: 'Not Purchase Message',
       };
     }
-    console.log(data);
+    let params = {
+      TableName: 'SimpleTable',
+      Item: data,
+    };
+    await docClient.put(params).promise();
     return {
       statusCode: 200,
       body: 'Add New Order Success',
     };
   } else if (message.events[0].type === 'unsend') {
-    let data = {
-      date: getCurrentTimeString(),
-      id: message.events[0].unsend.messageId,
+    let date = getCurrentTimeString();
+    let get_params = {
+      TableName: 'SimpleTable',
+      Key: { date: date, id: message.events[0].unsend.messageId },
     };
-    console.log(data);
+    let { Item: data } = await docClient.get(get_params).promise();
+    if (data && !data.isDeleted) {
+      data.isDeleted = true;
+    }
+    let put_params = {
+      TableName: 'SimpleTable',
+      Item: data,
+    };
+    await docClient.put(put_params).promise();
     return {
       statusCode: 200,
       body: 'Cancel Order Success',
