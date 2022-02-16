@@ -18,40 +18,25 @@ function getCurrentTimeString() {
   return `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}`; // -${d.getUTCHours()}-${d.getUTCMinutes()}`;
 }
 
-async function readProducts(date = getCurrentTimeString()) {
-  var params = {
-    TableName: 'SimpleTable',
-    Key: { date: date, id: 'Products' },
-  };
-  let { Item: data } = await docClient.get(params).promise();
-  console.log(data);
-}
-
-readProducts();
-
 exports.getAllItemsHandler = async (event) => {
   if (event.httpMethod !== 'GET') {
     throw new Error(
       `getAllItems only accept GET method, you tried: ${event.httpMethod}`
     );
   }
-  // All log statements are written to CloudWatch
   console.info('received:', event);
 
-  var params = {
-    TableName: tableName,
+  const date = event.pathParameters.id;
+
+  let params = {
+    TableName: 'SimpleTable',
+    Key: { date: date, id: 'Products' },
   };
-  let data;
-  try {
-    data = await docClient.scan(params).promise();
-  } catch (err) {
-    data = { Item: JSON.stringify(err) };
-  }
-  const items = data.Item;
+  let { Item: data } = await docClient.get(params).promise();
 
   const response = {
     statusCode: 200,
-    body: JSON.stringify(items),
+    body: JSON.stringify(data),
   };
 
   // All log statements are written to CloudWatch
