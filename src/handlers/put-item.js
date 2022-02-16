@@ -16,9 +16,10 @@ const docClient = new dynamodb.DocumentClient(
 function getCurrentTimeString() {
   let d = new Date();
   d.setUTCHours(d.getUTCHours() + 8);
-  return `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}`; // -${d.getUTCHours()}-${d.getUTCMinutes()}`;
+  return `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}`;
 }
 
+// TODO: update group ID
 const group_id = process.env.GROUP_ID || 'C0aaadacda65271ee8760524e669d452c';
 
 exports.putItemHandler = async (event) => {
@@ -37,7 +38,6 @@ exports.putItemHandler = async (event) => {
 };
 
 function handleMessageAPI(body) {
-  // Get id and name from the body of the request
   const message = JSON.parse(body);
 
   if (message.events.length === 0) {
