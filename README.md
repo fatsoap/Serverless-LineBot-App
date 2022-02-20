@@ -60,5 +60,6 @@ const docClient = new dynamodb.DocumentClient(
 [AWS DynamoDB Local Usage Notes](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.UsageNotes.html)
 
 ```
+// 讓 SAM 的 docker 執行時是在和 dynamoDB 同一個 docker net : lambda-local
 sam local start-api  --docker-network lambda-local
 ```
