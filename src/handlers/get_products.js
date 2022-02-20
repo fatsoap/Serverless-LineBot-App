@@ -1,14 +1,16 @@
-const tableName = process.env.SAMPLE_TABLE;
+const tableName = process.env.SAMPLE_TABLE || 'SampleTable';
 const AWS = require('aws-sdk');
 const dynamodb = require('aws-sdk/clients/dynamodb');
-const { getCurrentTimeString } = require('../utils/utils.js');
+const { getCurrentTimeString } = require('../utils/utils');
 
 const docClient = new dynamodb.DocumentClient(
   process.env.PROD
     ? {}
     : {
         region: 'ap-northeast-1',
-        endpoint: new AWS.Endpoint('http://127.0.0.1:8000'),
+        endpoint: process.env.AWS_SAM_LOCAL
+          ? new AWS.Endpoint('http://dynamodb:8000')
+          : new AWS.Endpoint('http://127.0.0.1:8000'),
       }
 );
 
@@ -23,9 +25,10 @@ exports.getProductsHandler = async (event) => {
   const date = event.pathParameters.date;
 
   let params = {
-    TableName: 'SimpleTable',
+    TableName: tableName,
     Key: { date: date, id: 'Products' },
   };
+  try {
   let { Item: data } = await docClient.get(params).promise();
 
   const response = {
@@ -38,4 +41,10 @@ exports.getProductsHandler = async (event) => {
     `response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`
   );
   return response;
+  } catch (err) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify(err),
+    };
+  }
 };
