@@ -1,15 +1,17 @@
-const tableName = process.env.SAMPLE_TABLE;
+const tableName = process.env.SAMPLE_TABLE || 'SampleTable';
 
 const AWS = require('aws-sdk');
 const dynamodb = require('aws-sdk/clients/dynamodb');
-const { getCurrentTimeString } = require('../utils/utils.js'); 
+const { getCurrentTimeString } = require('../utils/utils.js');
 
 const docClient = new dynamodb.DocumentClient(
   process.env.PROD
-  ? {}
-  : {
+    ? {}
+    : {
         region: 'ap-northeast-1',
-        endpoint: new AWS.Endpoint('http://127.0.0.1:8000'),
+        endpoint: process.env.AWS_SAM_LOCAL
+          ? new AWS.Endpoint('http://dynamodb:8000')
+          : new AWS.Endpoint('http://127.0.0.1:8000'),
       }
 );
 
@@ -20,7 +22,7 @@ exports.orderProductsHandler = async (event) => {
     );
   }
 
-  const response = await orderProducts(event.body);
+  const response = await orderProducts(JSON.parse(event.body));
 
   console.info(
     `response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`
@@ -30,7 +32,7 @@ exports.orderProductsHandler = async (event) => {
 
 async function orderProducts(items) {
   let getProductsParams = {
-    TableName: 'SimpleTable',
+    TableName: tableName,
     Key: { date: getCurrentTimeString(), id: 'Products' },
   };
   let { Item: products } = await docClient.get(getProductsParams).promise();
@@ -56,7 +58,7 @@ async function orderProducts(items) {
   }
 
   let PutProductsParams = {
-    TableName: 'SimpleTable',
+    TableName: tableName,
     Item: products,
   };
   await docClient.put(PutProductsParams).promise();
@@ -65,4 +67,3 @@ async function orderProducts(items) {
     body: items,
   };
 }
-
