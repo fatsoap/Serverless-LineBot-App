@@ -1,18 +1,19 @@
-const tableName = process.env.SAMPLE_TABLE;
+const tableName = process.env.SAMPLE_TABLE || 'SampleTable';
 
 const AWS = require('aws-sdk');
 const dynamodb = require('aws-sdk/clients/dynamodb');
-const { getCurrentTimeString } = require('../utils/utils.js'); 
+const { getCurrentTimeString } = require('../utils/utils.js');
 
 const docClient = new dynamodb.DocumentClient(
   process.env.PROD
     ? {}
     : {
         region: 'ap-northeast-1',
-        endpoint: new AWS.Endpoint('http://127.0.0.1:8000'),
+        endpoint: process.env.AWS_SAM_LOCAL
+          ? new AWS.Endpoint('http://dynamodb:8000')
+          : new AWS.Endpoint('http://127.0.0.1:8000'),
       }
 );
-
 
 // TODO: update group ID
 const group_id = process.env.GROUP_ID || 'C0aaadacda65271ee8760524e669d452c';
@@ -24,7 +25,7 @@ exports.parseMessagesHandler = async (event) => {
     );
   }
 
-  const response = await handleMessageAPI(event.body);
+  const response = await handleMessageAPI(JSON.parse(event.body));
 
   console.info(
     `response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`
@@ -32,9 +33,7 @@ exports.parseMessagesHandler = async (event) => {
   return response;
 };
 
-async function handleMessageAPI(body) {
-  const message = JSON.parse(body);
-
+async function handleMessageAPI(message) {
   if (message.events.length === 0) {
     return {
       statusCode: 200,
@@ -64,7 +63,7 @@ async function handleMessageAPI(body) {
       };
     }
     let params = {
-      TableName: 'SimpleTable',
+      TableName: tableName,
       Item: data,
     };
     await docClient.put(params).promise();
@@ -75,7 +74,7 @@ async function handleMessageAPI(body) {
   } else if (message.events[0].type === 'unsend') {
     let date = getCurrentTimeString();
     let get_params = {
-      TableName: 'SimpleTable',
+      TableName: tableName,
       Key: { date: date, id: message.events[0].unsend.messageId },
     };
     let { Item: data } = await docClient.get(get_params).promise();
@@ -83,7 +82,7 @@ async function handleMessageAPI(body) {
       data.isDeleted = true;
     }
     let put_params = {
-      TableName: 'SimpleTable',
+      TableName: tableName,
       Item: data,
     };
     await docClient.put(put_params).promise();
