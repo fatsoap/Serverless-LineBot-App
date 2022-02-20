@@ -1,0 +1,23 @@
+### GET Today's Products
+
+GET http://127.0.0.1:3000/api/product/
+
+
+### GET 2022-2-20 Products
+
+GET http://127.0.0.1:3000/api/product/2022-2-20
+
+
+
+### PUT Products
+
+PUT http://127.0.0.1:3000/api/product/
+Content-Type: application/json
+
+{"id":"Products","date":"2022-2-21","items":[
+    {
+        "name": "apple蘋果",
+        "total": 10,
+        "purchased": 0
+    }
+]}
