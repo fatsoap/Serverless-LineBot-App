@@ -20,27 +20,34 @@ exports.getProductsHandler = async (event) => {
       `getProducts only accept GET method, you tried: ${event.httpMethod}`
     );
   }
-
-  // TODO path params -> date
-  const date = event.pathParameters.date;
+  const date = event.pathParameters
+    ? event.pathParameters.date
+    : getCurrentTimeString();
 
   let params = {
     TableName: tableName,
     Key: { date: date, id: 'Products' },
   };
   try {
-  let { Item: data } = await docClient.get(params).promise();
+    let { Item: data } = await docClient.get(params).promise();
 
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify(data),
-  };
+    if (!data) {
+      data = {
+        id: 'Products',
+        date: date,
+        items: [],
+      };
+    }
+    const response = {
+      statusCode: 200,
+      body: JSON.stringify(data),
+    };
 
-  // All log statements are written to CloudWatch
-  console.info(
-    `response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`
-  );
-  return response;
+    // All log statements are written to CloudWatch
+    console.info(
+      `response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`
+    );
+    return response;
   } catch (err) {
     return {
       statusCode: 500,
