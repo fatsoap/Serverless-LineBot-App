@@ -5,6 +5,13 @@ Description: >-
 Transform:
   - AWS::Serverless-2016-10-31
 
+Globals:
+  Function:
+    Environment:
+      Variables:
+        PROD: false
+        TABLE_NAME: SampleTable
+
 Resources:
   healthCheckFunction:
     Type: AWS::Serverless::Function
@@ -21,6 +28,29 @@ Resources:
           Type: Api
           Properties:
             Path: /api/
+            Method: GET
+
+  getTodayProductsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/get_products.getProductsHandler
+      Runtime: nodejs12.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: Get Today Product API
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SampleTable
+      Environment:
+        Variables:
+          SAMPLE_TABLE: !Ref SampleTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /api/product/
             Method: GET
 
   getProductsFunction:
@@ -45,7 +75,7 @@ Resources:
           Properties:
             Path: /api/product/{date}
             Method: GET
-    
+
   putProductsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -68,7 +98,7 @@ Resources:
           Properties:
             Path: /api/product/
             Method: PUT
-  
+
   orderProductsFunction:
     Type: AWS::Serverless::Function
     Properties:
