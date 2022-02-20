@@ -18,14 +18,14 @@ const docClient = new dynamodb.DocumentClient(
 async function putProducts(data) {
   let params = {
     TableName: tableName,
+    Item: JSON.parse(data),
   };
   await docClient.put(params).promise();
   return {
     statusCode: 200,
-    body: data,
+    body: JSON.stringify(JSON.parse(data)),
   };
 }
-
 
 exports.putProductsHandler = async (event) => {
   if (event.httpMethod !== 'PUT') {
@@ -41,5 +41,3 @@ exports.putProductsHandler = async (event) => {
   );
   return response;
 };
-
-    
