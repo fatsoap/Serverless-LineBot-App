@@ -1,32 +1,23 @@
-const tableName = process.env.SAMPLE_TABLE;
+const tableName = process.env.SAMPLE_TABLE || 'SampleTable';
 
 const AWS = require('aws-sdk');
 const dynamodb = require('aws-sdk/clients/dynamodb');
-const { getCurrentTimeString } = require('../utils/utils.js');
+const { getCurrentTimeString } = require('../utils/utils');
 
 const docClient = new dynamodb.DocumentClient(
   process.env.PROD
     ? {}
     : {
         region: 'ap-northeast-1',
-        endpoint: new AWS.Endpoint('http://127.0.0.1:8000'),
+        endpoint: process.env.AWS_SAM_LOCAL
+          ? new AWS.Endpoint('http://dynamodb:8000')
+          : new AWS.Endpoint('http://127.0.0.1:8000'),
       }
 );
 
 async function putProducts(data) {
-  // let data = {
-  //   date: getCurrentTimeString(),
-  //   id: 'Products',
-  //   items: [
-    //   { name: '蘋果', total: 10, purchased: 0 },
-    //   { name: '香蕉', total: 3, purchased: 0 },
-    //   { name: '芭樂', total: 15, purchased: 0 },
-    //   { name: '葡萄', total: 7, purchased: 0 },
-    // ],
-  // };
   let params = {
-    TableName: 'SimpleTable',
-    Item: data,
+    TableName: tableName,
   };
   await docClient.put(params).promise();
   return {
