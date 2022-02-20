@@ -25,7 +25,7 @@ aws dynamodb list-tables --endpoint-url http://localhost:8000
    [AWS CLI Builder](https://awsclibuilder.com/home)
 
 ```
-aws dynamodb create-table --attribute-definitions AttributeName=id,AttributeType=S --table-name SimpleTable --key-schema AttributeName=id,KeyType=HASH --provisioned-throughput ReadCapacityUnits=2,WriteCapacityUnits=2 --region ap-southeast-2 --output json --endpoint-url http://localhost:8000
+aws dynamodb create-table --attribute-definitions AttributeName=date,AttributeType=S AttributeName=id,AttributeType=S --table-name SampleTable --key-schema AttributeName=date,KeyType=HASH AttributeName=id,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=2,WriteCapacityUnits=2 --region ap-northeast-1 --output json --endpoint-url http://localhost:8000
 ```
 
 建一個名叫 SimpleTable 的 table
@@ -41,13 +41,16 @@ aws dynamodb list-tables --endpoint-url http://localhost:8000
 測試階段時更改 dynamoDB 的 endpoint url
 
 ```javascript
-if (!process.env.PROD) {
-  AWS.config.update({
-    region: 'ap-northeast-1',
-    endpoint: 'http://localhost:8000',
-  });
-  console.log('++++++++++++++++++++++++++++++++++++++++++');
-}
+const docClient = new dynamodb.DocumentClient(
+  process.env.PROD
+    ? {}
+    : {
+        region: 'ap-northeast-1',
+        endpoint: process.env.AWS_SAM_LOCAL
+          ? new AWS.Endpoint('http://dynamodb:8000')
+          : new AWS.Endpoint('http://127.0.0.1:8000'),
+      }
+);
 ```
 
 [How to use AWS Dynamo DB Local](https://www.youtube.com/watch?v=z77UbwWf1po)
