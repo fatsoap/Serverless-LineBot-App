@@ -9,7 +9,7 @@ Globals:
   Function:
     Environment:
       Variables:
-        PROD: false
+        STAGE: DEV
         TABLE_NAME: SampleTable
 
 Resources:

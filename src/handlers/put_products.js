@@ -5,7 +5,7 @@ const dynamodb = require('aws-sdk/clients/dynamodb');
 const { getCurrentTimeString } = require('../utils/utils');
 
 const docClient = new dynamodb.DocumentClient(
-  process.env.PROD
+  process.env.STAGE
     ? {}
     : {
         region: 'ap-northeast-1',
