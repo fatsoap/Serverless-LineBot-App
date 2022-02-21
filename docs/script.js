@@ -49,10 +49,15 @@ async function purchase() {
   if (!(await liff.isInClient()) || !(await liff.isLoggedIn())) {
     return notInLiff();
   }
-  let res = await fetch(API_HOST + '/api/order/', {
-    method: 'POST',
-    body: JSON.stringify(cart),
-  });
+  try {
+    let res = await fetch(API_HOST + '/api/order/', {
+      method: 'POST',
+      body: JSON.stringify(cart),
+    });
+  } catch (err) {
+    // TODO: handle err
+    return;
+  }
   let { products, items } = await res.json();
   /** Send Message */
   await liff.sendMessages([
