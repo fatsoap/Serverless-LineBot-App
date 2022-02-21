@@ -24,6 +24,9 @@ async function putProducts(data) {
   return {
     statusCode: 200,
     body: JSON.stringify(data),
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
   };
 }
 

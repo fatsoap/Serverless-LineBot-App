@@ -38,12 +38,18 @@ async function handleMessageAPI(message) {
     return {
       statusCode: 200,
       body: 'Empty Event Message',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
     };
   }
   if (message.events[0].source.groupId !== group_id) {
     return {
       statusCode: 200,
       body: 'Not in Group Message',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
     };
   } else if (message.events[0].type === 'message') {
     let data = {};
@@ -60,6 +66,9 @@ async function handleMessageAPI(message) {
       return {
         statusCode: 200,
         body: 'Not Purchase Message',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
       };
     }
     let params = {
@@ -70,6 +79,9 @@ async function handleMessageAPI(message) {
     return {
       statusCode: 200,
       body: 'Add New Order Success',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
     };
   } else if (message.events[0].type === 'unsend') {
     let date = getCurrentTimeString();
@@ -89,11 +101,17 @@ async function handleMessageAPI(message) {
     return {
       statusCode: 200,
       body: 'Cancel Order Success',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
     };
   } else {
     return {
       statusCode: 200,
       body: 'Ignore Event Message',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
     };
   }
 }
