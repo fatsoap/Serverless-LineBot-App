@@ -63,6 +63,8 @@ async function purchase() {
         .join('\n')}`,
     },
   ]);
+  /** Close Window after success purchase */
+  liff.closeWindow();
 }
 
 function updateAmount(index, amount) {
