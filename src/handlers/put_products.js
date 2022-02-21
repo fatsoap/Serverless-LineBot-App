@@ -28,9 +28,9 @@ async function putProducts(data) {
 }
 
 exports.putProductsHandler = async (event) => {
-  if (event.httpMethod !== 'PUT') {
+  if (event.httpMethod !== 'POST') {
     throw new Error(
-      `putProducts only accepts PUT method, you tried: ${event.httpMethod} method.`
+      `putProducts only accepts POST method, you tried: ${event.httpMethod} method.`
     );
   }
 

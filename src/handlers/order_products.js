@@ -16,9 +16,9 @@ const docClient = new dynamodb.DocumentClient(
 );
 
 exports.orderProductsHandler = async (event) => {
-  if (event.httpMethod !== 'PUT') {
+  if (event.httpMethod !== 'POST') {
     throw new Error(
-      `orderProducts only accepts PUT method, you tried: ${event.httpMethod} method.`
+      `orderProducts only accepts POST method, you tried: ${event.httpMethod} method.`
     );
   }
 
@@ -54,6 +54,9 @@ async function orderProducts(items) {
     return {
       statusCode: 400,
       body: err.message,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
     };
   }
 
@@ -64,6 +67,9 @@ async function orderProducts(items) {
   await docClient.put(PutProductsParams).promise();
   return {
     statusCode: 200,
-    body: items,
+    body: JSON.stringify({ products: products, items: items }),
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
   };
 }

@@ -97,7 +97,7 @@ Resources:
           Type: Api
           Properties:
             Path: /api/product/
-            Method: PUT
+            Method: POST
 
   orderProductsFunction:
     Type: AWS::Serverless::Function
@@ -120,7 +120,7 @@ Resources:
           Type: Api
           Properties:
             Path: /api/order/
-            Method: PUT
+            Method: POST
 
   parseMessagesFunction:
     Type: AWS::Serverless::Function
@@ -142,7 +142,7 @@ Resources:
         Api:
           Type: Api
           Properties:
-            Path: /api/order/
+            Path: /api/line/
             Method: POST
 
   SampleTable:
