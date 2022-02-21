@@ -6,15 +6,23 @@
       src="https://static.line-scdn.net/liff/edge/2/sdk.js"
     ></script>
     <script src="./script.js"></script>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1 id="Os">1</h1>
-    <h1 id="Language">1</h1>
-    <h1 id="Version">1</h1>
-    <h1 id="isClient">1</h1>
-    <h1 id="isLoggin">1</h1>
-    <h1 id="profile">1</h1>
-    <h1 id="error">1</h1>
-    <h1>===</h1>
+    <main class="shopcart-container">
+      <header class="shopcart-title">
+        <h1>購物車</h1>
+        <h3 id="shopcart-titledate">xxxx/x/xx 訂購 (請於晚上六點前下單)</h3>
+      </header>
+      <ul id="shopcart-products"></ul>
+      <footer class="shopcart-footer">
+        <div class="shopcart-total">
+          <h2>Total</h2>
+          <h2 id="shopcart-totalprice">$ 0</h2>
+        </div>
+        <h3>(若要取消訂單，請於晚上六點前收回訊息)</h3>
+        <button id="shopcart-purchase">Purchase</button>
+      </footer>
+    </main>
   </body>
 </html>
