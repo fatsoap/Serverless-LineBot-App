@@ -44,9 +44,25 @@ function createProductElement(product, index) {
   cart.push({ amount: 0, ...product });
 }
 
-function purchase() {
-  let rt = document.getElementById('root');
-  rt.innerText = JSON.stringify(cart);
+async function purchase() {
+  await liff.ready;
+  if (!(await liff.isInClient()) || !(await liff.isLoggedIn())) {
+    return notInLiff();
+  }
+  let res = await fetch(API_HOST + '/api/order/', {
+    method: 'POST',
+    body: JSON.stringify(cart),
+  });
+  let { products, items } = await res.json();
+  /** Send Message */
+  await liff.sendMessages([
+    {
+      type: 'text',
+      text: `${products.date} 訂購\n${items
+        .map((item) => `${item.name}:${item.amount}`)
+        .join('\n')}`,
+    },
+  ]);
 }
 
 function updateAmount(index, amount) {
@@ -64,7 +80,7 @@ function updateAmount(index, amount) {
 
 async function initApp() {
   if (!(await liff.isLoggedIn())) {
-    return notLoggedIn();
+    return notInLiff();
   }
   try {
     let profile = await liff.getProfile();
@@ -84,11 +100,6 @@ async function initApp() {
 }
 
 async function notInLiff() {
-  console.log('Not in LIFF');
-  liff.closeWindow();
-}
-
-async function notLoggedIn() {
-  console.log('Not Logged In');
+  console.log('Not in LIFF or Not Logged In');
   liff.closeWindow();
 }
