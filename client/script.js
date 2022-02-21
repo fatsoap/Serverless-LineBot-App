@@ -1,4 +1,5 @@
-const API_HOST = 'http://127.0.0.1:3000';
+const API_HOST =
+  'https://1c8e-111-251-91-141.ngrok.io ' || 'http://127.0.0.1:3000';
 let cart = [];
 
 window.onload = async function () {
@@ -7,8 +8,9 @@ window.onload = async function () {
   if (!(await liff.isInClient())) {
     return notInLiff();
   }
+
   try {
-    await liff.init({ liffId: '1656848315-R6LQQLwG' });
+    await liff.init({ liffId: '1656880401-K2W55Dq1' });
     await initApp();
   } catch (err) {
     liff.closeWindow();
@@ -39,7 +41,12 @@ function createProductElement(product, index) {
   newPro.innerHTML = text;
   let ul = document.getElementById('shopcart-products');
   ul.appendChild(newPro);
-  cart.push({ amount: 0, name: product.name, price: product.price });
+  cart.push({ amount: 0, ...product });
+}
+
+function purchase() {
+  let rt = document.getElementById('root');
+  rt.innerText = JSON.stringify(cart);
 }
 
 function updateAmount(index, amount) {
