@@ -41,6 +41,9 @@ exports.getProductsHandler = async (event) => {
     const response = {
       statusCode: 200,
       body: JSON.stringify(data),
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
     };
 
     // All log statements are written to CloudWatch
@@ -52,6 +55,9 @@ exports.getProductsHandler = async (event) => {
     return {
       statusCode: 500,
       body: JSON.stringify(err),
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
     };
   }
 };
