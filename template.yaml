@@ -99,6 +99,52 @@ Resources:
             Path: /api/product/
             Method: POST
 
+  getTodayOrdersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/get_orders.getOrdersHandler
+      Runtime: nodejs12.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: Get Today Orders API
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SampleTable
+      Environment:
+        Variables:
+          SAMPLE_TABLE: !Ref SampleTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /api/order/
+            Method: GET
+
+  getOrdersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/get_orders.getOrdersHandler
+      Runtime: nodejs12.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: Get Orders By Date API
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SampleTable
+      Environment:
+        Variables:
+          SAMPLE_TABLE: !Ref SampleTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /api/order/{date}
+            Method: GET
+
   orderProductsFunction:
     Type: AWS::Serverless::Function
     Properties:
