@@ -1,5 +1,5 @@
 const API_HOST =
-  'https://1c8e-111-251-91-141.ngrok.io ' || 'http://127.0.0.1:3000';
+  'https://1c8e-111-251-91-141.ngrok.io' || 'http://127.0.0.1:3000';
 let cart = [];
 
 window.onload = async function () {
