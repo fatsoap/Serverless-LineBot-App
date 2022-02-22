@@ -1,0 +1,68 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+#admin-products-container {
+  width: 600px;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+#admin-products > div {
+  width: 520px;
+  height: 160px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px #131313 solid;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px 0 10px 0;
+}
+
+#admin-products > div > button {
+  width: 100px;
+  height: 25px;
+}
+
+.admin-product-main {
+  width: 400px;
+  padding: 10px 0px 10px 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.admin-product-main > div {
+  width: 100%;
+  padding: 5px 10px 5px 0px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.admin-products-button {
+  width: 50%;
+  height: 40px;
+  border: 1px #131313 solid;
+  border-radius: 10px;
+  margin: 10px;
+  font-size: 20px;
+}
+
+#admin-products-error {
+  text-align: center;
+  font-size: 20px;
+  color: #ff6666;
+}

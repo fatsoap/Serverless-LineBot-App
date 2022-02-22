@@ -9,10 +9,20 @@
     <title>Document</title>
   </head>
   <body>
-    <h1 id="admin-products-title">xxxx/x/xx 訂購</h1>
-    <h1>編輯商品</h1>
-    <main id="admin-products"></main>
-    <button onclick="createNewProduct()">新增商品</button>
-    <button onclick="updateProducts()">送出</button>
+    <div id="admin-products-container">
+      <h1 id="admin-products-title">編輯 xxxx/x/xx 訂購商品</h1>
+      <main id="admin-products"></main>
+      <button class="admin-products-button" onclick="createNewProduct()">
+        新增商品
+      </button>
+      <label id="admin-products-error"></label>
+      <button
+        class="admin-products-button"
+        style="background-color: #7cf882"
+        onclick="updateProducts()"
+      >
+        送出
+      </button>
+    </div>
   </body>
 </html>
