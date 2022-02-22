@@ -54,22 +54,22 @@ async function purchase() {
       method: 'POST',
       body: JSON.stringify(cart),
     });
+    let { products, items } = await res.json();
+    /** Send Message */
+    await liff.sendMessages([
+      {
+        type: 'text',
+        text: `${products.date} 訂購\n${items
+          .map((item) => `${item.name}:${item.amount}`)
+          .join('\n')}`,
+      },
+    ]);
+    /** Close Window after success purchase */
+    liff.closeWindow();
   } catch (err) {
     // TODO: handle err
     return;
   }
-  let { products, items } = await res.json();
-  /** Send Message */
-  await liff.sendMessages([
-    {
-      type: 'text',
-      text: `${products.date} 訂購\n${items
-        .map((item) => `${item.name}:${item.amount}`)
-        .join('\n')}`,
-    },
-  ]);
-  /** Close Window after success purchase */
-  liff.closeWindow();
 }
 
 function updateAmount(index, amount) {
