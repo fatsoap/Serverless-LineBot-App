@@ -30,7 +30,7 @@ exports.getAllItemsHandler = async (event) => {
 
   let params = {
     TableName: 'SimpleTable',
-    Key: { date: date, id: 'Products' },
+    Key: { date: date, id: process.env.PRODUCTS },
   };
   let { Item: data } = await docClient.get(params).promise();
 

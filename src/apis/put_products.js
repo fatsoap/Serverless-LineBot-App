@@ -22,7 +22,7 @@ function getCurrentTimeString() {
 async function putProducts() {
   let data = {
     date: getCurrentTimeString(),
-    id: 'Products',
+    id: process.env.PRODUCTS,
     items: [
       { name: '蘋果', total: 10, purchased: 0 },
       { name: '香蕉', total: 3, purchased: 0 },

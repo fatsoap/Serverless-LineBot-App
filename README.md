@@ -63,3 +63,9 @@ const docClient = new dynamodb.DocumentClient(
 // 讓 SAM 的 docker 執行時是在和 dynamoDB 同一個 docker net : lambda-local
 sam local start-api  --docker-network lambda-local
 ```
+
+6. Deploy
+
+```
+sam deploy --guided
+```

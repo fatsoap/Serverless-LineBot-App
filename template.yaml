@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
-  sam-app
+  linebot shop app
 
 Transform:
   - AWS::Serverless-2016-10-31
@@ -9,8 +9,9 @@ Globals:
   Function:
     Environment:
       Variables:
-        STAGE: DEV
+        STAGE: PROD
         TABLE_NAME: SampleTable
+        PRODUCTS: Products
 
 Resources:
   healthCheckFunction:
@@ -192,14 +193,19 @@ Resources:
             Method: POST
 
   SampleTable:
-    Type: AWS::Serverless::SimpleTable
+    Type: AWS::DynamoDB::Table
     Properties:
-      PrimaryKey:
-        Name: date
-        Type: String
-      ProvisionedThroughput:
-        ReadCapacityUnits: 2
-        WriteCapacityUnits: 2
+      AttributeDefinitions:
+        - AttributeName: date
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: date
+          KeyType: HASH
+        - AttributeName: id
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
 
 Outputs:
   WebEndpoint:

@@ -27,7 +27,7 @@ async function orderProducts() {
 
   let getProductsParams = {
     TableName: 'SimpleTable',
-    Key: { date: getCurrentTimeString(), id: 'Products' },
+    Key: { date: getCurrentTimeString(), id: process.env.PRODUCTS },
   };
   let { Item: products } = await docClient.get(getProductsParams).promise();
   try {

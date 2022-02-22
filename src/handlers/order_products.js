@@ -33,7 +33,7 @@ exports.orderProductsHandler = async (event) => {
 async function orderProducts(items) {
   let getProductsParams = {
     TableName: tableName,
-    Key: { date: getCurrentTimeString(), id: 'Products' },
+    Key: { date: getCurrentTimeString(), id: process.env.PRODUCTS },
   };
   let { Item: products } = await docClient.get(getProductsParams).promise();
   try {

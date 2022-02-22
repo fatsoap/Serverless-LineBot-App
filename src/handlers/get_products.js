@@ -26,14 +26,14 @@ exports.getProductsHandler = async (event) => {
 
   let params = {
     TableName: tableName,
-    Key: { date: date, id: 'Products' },
+    Key: { date: date, id: process.env.PRODUCTS },
   };
   try {
     let { Item: data } = await docClient.get(params).promise();
 
     if (!data) {
       data = {
-        id: 'Products',
+        id: process.env.PRODUCTS,
         date: date,
         items: [],
       };
