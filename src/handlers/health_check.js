@@ -1,6 +1,5 @@
 const tableName = process.env.SAMPLE_TABLE;
 
-
 exports.healthCheckHandler = async (event) => {
   if (event.httpMethod !== 'GET') {
     throw new Error(
@@ -10,7 +9,10 @@ exports.healthCheckHandler = async (event) => {
 
   const response = {
     statusCode: 200,
-    body: JSON.stringify({ data: 'Health Check Pass' }),
+    body: JSON.stringify({
+      data: 'Health Check Pass',
+      value: process.env.ADMIN_KEY,
+    }),
   };
 
   console.info(
