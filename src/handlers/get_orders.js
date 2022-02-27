@@ -1,21 +1,22 @@
-const tableName = process.env.SAMPLE_TABLE || "SampleTable";
-const AWS = require("aws-sdk");
-const dynamodb = require("aws-sdk/clients/dynamodb");
-const { getCurrentTimeString } = require("../utils/utils");
+require('dotenv').config();
+const tableName = process.env.SAMPLE_TABLE || 'SampleTable';
+const AWS = require('aws-sdk');
+const dynamodb = require('aws-sdk/clients/dynamodb');
+const { getCurrentTimeString } = require('../utils/utils');
 
 const docClient = new dynamodb.DocumentClient(
-  process.env.STAGE === "PROD"
+  process.env.STAGE === 'PROD'
     ? {}
     : {
-        region: "ap-northeast-1",
+        region: 'ap-northeast-1',
         endpoint: process.env.AWS_SAM_LOCAL
-          ? new AWS.Endpoint("http://dynamodb:8000")
-          : new AWS.Endpoint("http://127.0.0.1:8000"),
+          ? new AWS.Endpoint('http://dynamodb:8000')
+          : new AWS.Endpoint('http://127.0.0.1:8000'),
       }
 );
 
 exports.getOrdersHandler = async (event) => {
-  if (event.httpMethod !== "GET") {
+  if (event.httpMethod !== 'GET') {
     throw new Error(
       `getOrders only accept GET method, you tried: ${event.httpMethod}`
     );
@@ -26,12 +27,12 @@ exports.getOrdersHandler = async (event) => {
 
   let params = {
     TableName: tableName,
-    KeyConditionExpression: "#date = :date",
+    KeyConditionExpression: '#date = :date',
     ExpressionAttributeNames: {
-      "#date": "date",
+      '#date': 'date',
     },
     ExpressionAttributeValues: {
-      ":date": date,
+      ':date': date,
     },
   };
   try {
@@ -49,7 +50,7 @@ exports.getOrdersHandler = async (event) => {
       statusCode: 200,
       body: JSON.stringify(data),
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        'Access-Control-Allow-Origin': '*',
       },
     };
 
@@ -63,7 +64,7 @@ exports.getOrdersHandler = async (event) => {
       statusCode: 500,
       body: JSON.stringify(err),
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        'Access-Control-Allow-Origin': '*',
       },
     };
   }

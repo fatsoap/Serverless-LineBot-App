@@ -1,3 +1,4 @@
+require('dotenv').config();
 const tableName = process.env.SAMPLE_TABLE || 'SampleTable';
 const AWS = require('aws-sdk');
 const dynamodb = require('aws-sdk/clients/dynamodb');

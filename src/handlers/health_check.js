@@ -1,4 +1,5 @@
-const tableName = process.env.SAMPLE_TABLE;
+require('dotenv').config();
+const stage = process.env.STAGE;
 
 exports.healthCheckHandler = async (event) => {
   if (event.httpMethod !== 'GET') {
@@ -10,8 +11,7 @@ exports.healthCheckHandler = async (event) => {
   const response = {
     statusCode: 200,
     body: JSON.stringify({
-      data: 'Health Check Pass',
-      value: process.env.ADMIN_KEY,
+      data: `Health Check Pass , Stage : ${stage}`,
     }),
   };
 
