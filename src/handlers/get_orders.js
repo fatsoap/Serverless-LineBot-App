@@ -25,7 +25,7 @@ exports.getOrdersHandler = async (event) => {
     ? event.pathParameters.date
     : getCurrentTimeString();
 
-  let params = {
+  let orderParams = {
     TableName: tableName,
     KeyConditionExpression: '#date = :date',
     ExpressionAttributeNames: {
@@ -35,10 +35,21 @@ exports.getOrdersHandler = async (event) => {
       ':date': date,
     },
   };
+  let userParams = {
+    TableName: tableName,
+    KeyConditionExpression: '#date = :date',
+    ExpressionAttributeNames: {
+      '#date': 'date',
+    },
+    ExpressionAttributeValues: {
+      ':date': process.env.MEMBERS || 'Members',
+    },
+  };
   try {
-    let data = await getOrderData(params);
-    if (data.length === 0) {
-      data = [
+    let order = await getOrderData(orderParams);
+    let user = await getUserData(userParams);
+    if (order.length === 0) {
+      order = [
         {
           date: date,
           id: process.env.PRODUCTS,
@@ -48,7 +59,7 @@ exports.getOrdersHandler = async (event) => {
     }
     const response = {
       statusCode: 200,
-      body: JSON.stringify(data),
+      body: JSON.stringify({ order, user }),
       headers: {
         'Access-Control-Allow-Origin': '*',
       },
@@ -76,10 +87,22 @@ async function getOrderData(params) {
     Count: amount,
     LastEvaluatedKey: LastKey,
   } = await docClient.query(params).promise();
-  console.log(amount, LastKey);
   if (LastKey) {
     params = { ...params, ExclusiveStartKey: params };
     return [...data, ...(await getOrderData(params))];
+  }
+  return [...data];
+}
+
+async function getUserData(params) {
+  let {
+    Items: data,
+    Count: amount,
+    LastEvaluatedKey: LastKey,
+  } = await docClient.query(params).promise();
+  if (LastKey) {
+    params = { ...params, ExclusiveStartKey: params };
+    return [...data, ...(await getUserData(params))];
   }
   return [...data];
 }
