@@ -49,77 +49,95 @@ async function handleMessageAPI(message) {
       },
     };
   }
-  if (message.events[0].source.groupId !== group_id) {
-    return {
-      statusCode: 200,
-      body: 'Not in Group Message',
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-    };
-  } else if (message.events[0].type === 'message') {
-    let data = {};
-    try {
-      data = {
-        date: getCurrentTimeString(),
-        id: message.events[0].message.id,
-        user_id: message.events[0].source.userId,
-        items: parseOrderMessage(message.events[0].message.text),
-        timestamp: message.events[0].timestamp,
-        isDeleted: false,
-      };
-    } catch (err) {
-      return {
-        statusCode: 200,
-        body: 'Not Purchase Message',
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        },
-      };
+  for (let i = 0; i < message.events.length; i++) {
+    if (message.events[i].source?.groupId !== group_id) {
+      console.info('Not in Group Message');
+    } else if (message.events[i].type === 'memberJoined') {
+      for (let j = 0; j < message.events[i].joined.members.length; j++) {
+        try {
+          member = message.events[i].joined.members[j];
+          data = {
+            date: process.env.MEMBERS,
+            id: member.userId,
+            user_id: member.userId,
+            timestamp: message.events[i].timestamp,
+          };
+          let profile = await client.getGroupMemberProfile(
+            group_id,
+            data.user_id
+          );
+          data.display_name = profile.displayName;
+          data.picture_url = profile.pictureUrl;
+          data.status_message = profile.statusMessage;
+
+          let params = {
+            TableName: tableName,
+            Item: data,
+          };
+          await docClient.put(params).promise();
+          console.info(
+            `Add Joined Member Success ${message.events[i].joined.members[j].userId}`
+          );
+        } catch (err) {
+          console.info(
+            `Add Joined Member Failed ${message.events[i].joined.members[j].userId}`
+          );
+        }
+      }
+    } else if (message.events[i].type === 'message') {
+      try {
+        let data = {
+          date: getCurrentTimeString(),
+          id: message.events[i].message.id,
+          user_id: message.events[i].source.userId,
+          items: parseOrderMessage(message.events[i].message.text),
+          timestamp: message.events[i].timestamp,
+          isDeleted: false,
+        };
+        let params = {
+          TableName: tableName,
+          Item: data,
+        };
+        await docClient.put(params).promise();
+        console.info(`Add New Order Success ${message.events[i].message.id}`);
+      } catch (err) {
+        console.info(`Not Purchase Message ${message.events[i].message.id}`);
+      }
+    } else if (message.events[i].type === 'unsend') {
+      try {
+        let date = getCurrentTimeString();
+        let get_params = {
+          TableName: tableName,
+          Key: { date: date, id: message.events[i].unsend.messageId },
+        };
+        let { Item: data } = await docClient.get(get_params).promise();
+        if (data && !data.isDeleted) {
+          data.isDeleted = true;
+        }
+        let put_params = {
+          TableName: tableName,
+          Item: data,
+        };
+        await docClient.put(put_params).promise();
+        console.info(
+          `Cancel Order Success ${message.events[i].unsend.messageId}`
+        );
+      } catch (err) {
+        console.info(
+          `Cancel Order Failed ${message.events[i].unsend.messageId}`
+        );
+      }
+    } else {
+      console.info('Ignore Event Message');
     }
-    let params = {
-      TableName: tableName,
-      Item: data,
-    };
-    await docClient.put(params).promise();
-    return {
-      statusCode: 200,
-      body: 'Add New Order Success',
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-    };
-  } else if (message.events[0].type === 'unsend') {
-    let date = getCurrentTimeString();
-    let get_params = {
-      TableName: tableName,
-      Key: { date: date, id: message.events[0].unsend.messageId },
-    };
-    let { Item: data } = await docClient.get(get_params).promise();
-    if (data && !data.isDeleted) {
-      data.isDeleted = true;
-    }
-    let put_params = {
-      TableName: tableName,
-      Item: data,
-    };
-    await docClient.put(put_params).promise();
-    return {
-      statusCode: 200,
-      body: 'Cancel Order Success',
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-    };
-  } else {
-    return {
-      statusCode: 200,
-      body: 'Ignore Event Message',
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-    };
   }
+  return {
+    statusCode: 200,
+    body: 'Handle Message Done',
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+  };
 }
 
 function parseOrderMessage(text) {
