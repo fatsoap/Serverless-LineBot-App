@@ -1,8 +1,14 @@
+require('dotenv').config();
 const tableName = process.env.SAMPLE_TABLE || 'SampleTable';
 
 const AWS = require('aws-sdk');
 const dynamodb = require('aws-sdk/clients/dynamodb');
 const { getCurrentTimeString } = require('../utils/utils.js');
+const line = require('@line/bot-sdk');
+
+const client = new line.Client({
+  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
+});
 
 const docClient = new dynamodb.DocumentClient(
   process.env.STAGE === 'PROD'
