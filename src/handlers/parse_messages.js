@@ -50,7 +50,7 @@ async function handleMessageAPI(message) {
     };
   }
   for (let i = 0; i < message.events.length; i++) {
-    if (message.events[i].source?.groupId !== group_id) {
+    if (message.events[i].source.groupId !== group_id) {
       console.info('Not in Group Message');
     } else if (message.events[i].type === 'memberJoined') {
       for (let j = 0; j < message.events[i].joined.members.length; j++) {
@@ -68,7 +68,7 @@ async function handleMessageAPI(message) {
           );
           data.display_name = profile.displayName;
           data.picture_url = profile.pictureUrl;
-          data.status_message = profile.statusMessage;
+          data.status_message = profile.statusMessage || '';
 
           let params = {
             TableName: tableName,
@@ -79,6 +79,7 @@ async function handleMessageAPI(message) {
             `Add Joined Member Success ${message.events[i].joined.members[j].userId}`
           );
         } catch (err) {
+          console.info(err);
           console.info(
             `Add Joined Member Failed ${message.events[i].joined.members[j].userId}`
           );
