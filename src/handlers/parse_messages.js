@@ -131,7 +131,7 @@ async function handleMessageAPI(message) {
           let index = products.items.findIndex((p) => p.name === item.name);
           if (index === -1) return; // product not exist
           products.items[index].purchased =
-            Number(products.items[index].purchased) + Number(item.amount);
+            Number(products.items[index].purchased) - Number(item.amount);
         });
         let put_products_params = {
           TableName: tableName,
