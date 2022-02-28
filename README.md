@@ -36,7 +36,19 @@ aws dynamodb create-table --attribute-definitions AttributeName=date,AttributeTy
 aws dynamodb list-tables --endpoint-url http://localhost:8000
 ```
 
-5. 開始開發
+5. ENV
+
+```
+STAGE=XXXXX
+TABLE_NAME=XXXXX
+PRODUCTS=XXXXX
+GROUP_ID=XXXXX
+ADMIN_KEY=XXXXX
+CHANNEL_ACCESS_TOKEN=XXXXX
+MEMBERS=XXXXX
+```
+
+6. 開始開發
 
 測試階段時更改 dynamoDB 的 endpoint url
 
@@ -64,7 +76,7 @@ const docClient = new dynamodb.DocumentClient(
 sam local start-api  --docker-network lambda-local
 ```
 
-6. Deploy
+7. Deploy
 
 ```
 sam deploy --guided
