@@ -1,6 +1,7 @@
 const API_HOST =
   'https://2ann2yvt6e.execute-api.ap-northeast-1.amazonaws.com/Prod';
 let cart = [];
+let fetching = false;
 
 window.onload = async function () {
   let h3 = document.getElementById('profile');
@@ -45,11 +46,16 @@ function createProductElement(product, index) {
 }
 
 async function purchase() {
+  if (fetching) return;
   await liff.ready;
   if (!(await liff.isInClient()) || !(await liff.isLoggedIn())) {
     return notInLiff();
   }
   try {
+    fetching = true;
+    document.getElementById('shopcart-purchase').style.backgroundColor =
+      '#ff0000';
+    handlerError('下單中');
     let res = await fetch(API_HOST + '/api/order/', {
       method: 'POST',
       body: JSON.stringify(cart),
@@ -64,11 +70,14 @@ async function purchase() {
           .join('\n')}`,
       },
     ]);
+    handlerError('下單成功');
     /** Close Window after success purchase */
-    liff.closeWindow();
+    setTimeout(() => liff.closeWindow(), 500);
   } catch (err) {
-    // TODO: handle err
-    return;
+    fetching = false;
+    document.getElementById('shopcart-purchase').style.backgroundColor =
+      '#04aa6d';
+    handlerError(err.message);
   }
 }
 
@@ -103,10 +112,18 @@ async function initApp() {
     data.items.forEach((element, index) => {
       createProductElement(element, index);
     });
-  } catch (err) {}
+  } catch (err) {
+    handlerError(err.message);
+  }
 }
 
 async function notInLiff() {
   console.log('Not in LIFF or Not Logged In');
   liff.closeWindow();
+}
+
+function handlerError(msg) {
+  //throw msg;
+  let err = document.getElementById('shopcart-error');
+  err.innerText = msg;
 }
