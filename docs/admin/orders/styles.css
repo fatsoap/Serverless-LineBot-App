@@ -16,3 +16,35 @@ body {
   justify-content: flex-start;
   align-items: center;
 }
+#admin-orders-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#admin-orders-table th,
+#admin-orders-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  margin: 0px;
+}
+
+#admin-orders-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#admin-orders-table tr:hover {
+  background-color: #ddd;
+}
+
+#admin-orders-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #04aa6d;
+  color: white;
+}
+
+#admin-orders-table img {
+  width: 50px;
+  height: 50px;
+}

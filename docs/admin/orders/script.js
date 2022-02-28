@@ -4,13 +4,13 @@ const API_HOST =
 let products = undefined;
 
 window.onload = async function () {
-  //await init();
+  await init();
 };
 
 async function init() {
   try {
     /** get Today's Orders */
-    let res = await fetch(API_HOST + '/api/order/2022-2-22', {
+    let res = await fetch(API_HOST + '/api/order/', {
       method: 'GET',
     });
     let { order, user } = await res.json();
@@ -55,31 +55,34 @@ function parseData(orders, users) {
 }
 
 async function initTable(orders) {
-  let table_body = document.getElementById('admin-orders-table-body');
-  let table_head = document.getElementById('admin-orders-table-head');
+  let table = document.getElementById('admin-orders-table');
   let head_text = '<tr>';
   head_text += `<th>用戶</th>`;
   products.items.forEach((item) => {
     head_text += `<th>${item.name}</th>`;
   });
   head_text += '</tr>';
-  table_head.innerHTML = head_text;
-  let text = '';
+  let body_text = '';
   if (!products) return;
   Object.keys(orders).forEach((key, index) => {
     order = orders[key];
-    text += '<tr>';
-    text += `<td>${order.name}</td>`;
+    body_text += '<tr>';
+    body_text += `<td>${order.name}</td>`; // <img src="${order.avatar}" />
     products.items.forEach((item) => {
       let amount = 0;
       if (order.items[item.name]) {
         amount = order.items[item.name];
       }
-      text += `<td>${amount}</td>`;
+      body_text += `<td>${amount}</td>`;
     });
-    text += '</tr>';
+    body_text += '</tr>';
   });
-  table_body.innerHTML = text;
+  body_text += '<tr><td>總和</td>';
+  products.items.forEach((item) => {
+    body_text += `<td>${item.purchased}</td>`;
+  });
+  body_text += '</tr>';
+  table.innerHTML = head_text + body_text;
 }
 
 function handlerError(msg) {
