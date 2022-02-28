@@ -44,14 +44,16 @@ async function orderProducts(items) {
         throw 'product not exist error';
       }
       if (
-        products.items[index].total <
-        products.items[index].purchased + item.amount
+        Number(products.items[index].total) <
+        Number(products.items[index].purchased) + Number(item.amount)
       ) {
         throw 'product amount not enough';
       }
-      products.items[index].purchased += item.amount;
+      products.items[index].purchased =
+        Number(products.items[index].purchased) + Number(item.amount);
     });
   } catch (err) {
+    console.info(JSON.stringify(err));
     return {
       statusCode: 400,
       body: err.message,
