@@ -1,53 +1,113 @@
+@PROD_HOST=https://2ann2yvt6e.execute-api.ap-northeast-1.amazonaws.com/Prod
+@DEV_HOST=http://localhost:3000
+@HOST={{DEV_HOST}}
+
 ### Health Check
-GET  https://2ann2yvt6e.execute-api.ap-northeast-1.amazonaws.com/Prod/api/
+GET  {{HOST}}/api/
 
 
 ### GET Today's Products
 
-GET http://127.0.0.1:3000/api/product/
+GET {{HOST}}/api/product/
 
 
 ### GET 2022-2-20 Products
 
-GET https://2ann2yvt6e.execute-api.ap-northeast-1.amazonaws.com/Prod/api/product/2022-2-22
+GET {{HOST}}/api/product/2022-2-22
 
 
 
 ### PUT Products
 
-POST https://2ann2yvt6e.execute-api.ap-northeast-1.amazonaws.com/Prod/api/product/
+POST {{HOST}}/api/product/
 Content-Type: application/json
 
-{"id":"Products","date":"2022-2-22","items":[
+{"id":"Products","date":"2022-2-28","items":[
     {
       "name": "apple",
       "total": 10,
-      "purchased": 2,
+      "purchased": 3,
       "price": 44
     },
     {
       "name": "banana",
       "total": 44,
-      "purchased": 6,
+      "purchased": 0,
       "price": 6
     },
     {
       "name": "cat",
       "total": 44,
-      "purchased": 6,
+      "purchased": 0,
       "price": 6
     }
 ]}
 
-# https://2ann2yvt6e.execute-api.ap-northeast-1.amazonaws.com/Prod/api/line/
+### Send Orders
+POST {{HOST}}/api/order/
+Content-Type: application/json
+
+[
+    {"name": "apple", "amount": "3"}
+]
+
 ### GET Orders
 
-GET https://2ann2yvt6e.execute-api.ap-northeast-1.amazonaws.com/Prod/api/order/2022-2-22
+GET {{HOST}}/api/order/
 
 
-### Parse Message 
+### Unsend Order Message 
 
-POST  https://2ann2yvt6e.execute-api.ap-northeast-1.amazonaws.com/Prod/api/line/
+POST  {{HOST}}/api/line/
+Content-Type: application/json
+
+{
+    "events": [
+        {
+            "source": {
+                "groupId": "C0aaadacda65271ee8760524e669d452c"
+            },
+            "type": "unsend",
+            "unsend": {
+                "messageId": "12345"
+            }
+        }
+    ]
+}
+
+### Send Order Message 
+
+POST  {{HOST}}/api/line/
+Content-Type: application/json
+
+{
+    "events": [
+        {
+            "source": {
+                "groupId": "C0aaadacda65271ee8760524e669d452c",
+                "userId":  "U4f0be79dd749f25077200bce2535af4e"
+            },
+            "type": "message",
+            "joined": {
+                "members": [
+                    {
+                        "userId": "U4f0be79dd749f25077200bce2535af4e"
+                    }
+                ]
+            },
+            "timestamp":123456789,
+            "message": {
+                "id": "12345",
+                "text": "2022-2-28 訂購\napple:3"
+            }
+        }
+    ]
+}
+
+
+### Join Member Message 
+
+POST  {{HOST}}/api/line/
 Content-Type: application/json
 
 {
