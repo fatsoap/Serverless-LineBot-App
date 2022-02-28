@@ -111,15 +111,33 @@ async function handleMessageAPI(message) {
           TableName: tableName,
           Key: { date: date, id: message.events[i].unsend.messageId },
         };
-        let { Item: data } = await docClient.get(get_params).promise();
-        if (data && !data.isDeleted) {
-          data.isDeleted = true;
+        let { Item: message } = await docClient.get(get_params).promise();
+        if (!message) continue; // not order message
+        if (!message.isDeleted) {
+          message.isDeleted = true;
         }
-        let put_params = {
+        let put_message_params = {
           TableName: tableName,
-          Item: data,
+          Item: message,
         };
-        await docClient.put(put_params).promise();
+        let getProductsParams = {
+          TableName: tableName,
+          Key: { date: date, id: process.env.PRODUCTS },
+        };
+        let { Item: products } = await docClient
+          .get(getProductsParams)
+          .promise();
+        message.items.forEach((item) => {
+          let index = products.items.findIndex((p) => p.name === item.name);
+          if (index === -1) return; // product not exist
+          products.items[index].purchased -= item.amount;
+        });
+        let put_products_params = {
+          TableName: tableName,
+          Item: products,
+        };
+        await docClient.put(put_products_params).promise();
+        await docClient.put(put_message_params).promise();
         console.info(
           `Cancel Order Success ${message.events[i].unsend.messageId}`
         );
