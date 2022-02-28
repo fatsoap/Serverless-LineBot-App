@@ -79,7 +79,7 @@ async function handleMessageAPI(message) {
             `Add Joined Member Success ${message.events[i].joined.members[j].userId}`
           );
         } catch (err) {
-          console.info(err);
+          console.info(JSON.stringify(err));
           console.info(
             `Add Joined Member Failed ${message.events[i].joined.members[j].userId}`
           );
@@ -111,14 +111,14 @@ async function handleMessageAPI(message) {
           TableName: tableName,
           Key: { date: date, id: message.events[i].unsend.messageId },
         };
-        let { Item: message } = await docClient.get(get_params).promise();
-        if (!message) continue; // not order message
-        if (!message.isDeleted) {
-          message.isDeleted = true;
+        let { Item: order_message } = await docClient.get(get_params).promise();
+        if (!order_message) continue; // not order message
+        if (!order_message.isDeleted) {
+          order_message.isDeleted = true;
         }
         let put_message_params = {
           TableName: tableName,
-          Item: message,
+          Item: order_message,
         };
         let getProductsParams = {
           TableName: tableName,
@@ -127,10 +127,11 @@ async function handleMessageAPI(message) {
         let { Item: products } = await docClient
           .get(getProductsParams)
           .promise();
-        message.items.forEach((item) => {
+        order_message.items.forEach((item) => {
           let index = products.items.findIndex((p) => p.name === item.name);
           if (index === -1) return; // product not exist
-          products.items[index].purchased -= item.amount;
+          products.items[index].purchased =
+            Number(products.items[index].purchased) + Number(item.amount);
         });
         let put_products_params = {
           TableName: tableName,
@@ -142,6 +143,7 @@ async function handleMessageAPI(message) {
           `Cancel Order Success ${message.events[i].unsend.messageId}`
         );
       } catch (err) {
+        console.info(JSON.stringify(err));
         console.info(
           `Cancel Order Failed ${message.events[i].unsend.messageId}`
         );
