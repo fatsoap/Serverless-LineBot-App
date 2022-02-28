@@ -1,3 +1,7 @@
+### Health Check
+GET  https://2ann2yvt6e.execute-api.ap-northeast-1.amazonaws.com/Prod/api/
+
+
 ### GET Today's Products
 
 GET http://127.0.0.1:3000/api/product/
@@ -5,19 +9,62 @@ GET http://127.0.0.1:3000/api/product/
 
 ### GET 2022-2-20 Products
 
-GET http://127.0.0.1:3000/api/product/2022-2-20
+GET https://2ann2yvt6e.execute-api.ap-northeast-1.amazonaws.com/Prod/api/product/2022-2-22
 
 
 
 ### PUT Products
 
-PUT http://127.0.0.1:3000/api/product/
+POST https://2ann2yvt6e.execute-api.ap-northeast-1.amazonaws.com/Prod/api/product/
 Content-Type: application/json
 
-{"id":"Products","date":"2022-2-21","items":[
+{"id":"Products","date":"2022-2-22","items":[
     {
-        "name": "apple蘋果",
-        "total": 10,
-        "purchased": 0
+      "name": "apple",
+      "total": 10,
+      "purchased": 2,
+      "price": 44
+    },
+    {
+      "name": "banana",
+      "total": 44,
+      "purchased": 6,
+      "price": 6
+    },
+    {
+      "name": "cat",
+      "total": 44,
+      "purchased": 6,
+      "price": 6
     }
 ]}
+
+# https://2ann2yvt6e.execute-api.ap-northeast-1.amazonaws.com/Prod/api/line/
+### GET Orders
+
+GET https://2ann2yvt6e.execute-api.ap-northeast-1.amazonaws.com/Prod/api/order/2022-2-22
+
+
+### Parse Message 
+
+POST  https://2ann2yvt6e.execute-api.ap-northeast-1.amazonaws.com/Prod/api/line/
+Content-Type: application/json
+
+{
+    "events": [
+        {
+            "source": {
+                "groupId": "C0aaadacda65271ee8760524e669d452c"
+            },
+            "type": "memberJoined",
+            "joined": {
+                "members": [
+                    {
+                        "userId": "U4f0be79dd749f25077200bce2535af4e"
+                    }
+                ]
+            },
+            "timestamp":123456789
+        }
+    ]
+}
