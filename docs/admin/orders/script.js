@@ -64,22 +64,24 @@ async function initTable(orders) {
   head_text += '</tr>';
   let body_text = '';
   if (!products) return;
-  Object.keys(orders).forEach((key, index) => {
+  let purchased = Array(products.items.length).fill(0);
+  Object.keys(orders).forEach((key) => {
     order = orders[key];
     body_text += '<tr>';
     body_text += `<td>${order.name}</td>`; // <img src="${order.avatar}" />
-    products.items.forEach((item) => {
+    products.items.forEach((item, index) => {
       let amount = 0;
       if (order.items[item.name]) {
         amount = order.items[item.name];
       }
+      purchased[index] += amount;
       body_text += `<td>${amount}</td>`;
     });
     body_text += '</tr>';
   });
   body_text += '<tr><td>總和</td>';
-  products.items.forEach((item) => {
-    body_text += `<td>${item.purchased}</td>`;
+  purchased.forEach((nm) => {
+    body_text += `<td>${nm}</td>`;
   });
   body_text += '</tr>';
   table.innerHTML = head_text + body_text;
