@@ -3,7 +3,7 @@ const API_HOST =
 
 let product_amount = 0;
 let products = undefined;
-let fetching = false;
+let fetching = true;
 
 window.onload = async function () {
   await init();
@@ -21,6 +21,7 @@ async function init() {
     ).innerText = `編輯 ${data.date} 訂購商品`;
     products = { ...data };
     initProdcuts(data.items);
+    fetching = false;
   } catch (err) {}
 }
 
@@ -57,6 +58,7 @@ async function initProdcuts(items) {
 }
 
 function createNewProduct() {
+  if (fetching) return;
   let products_container = document.getElementById('admin-products');
   let newPro = document.createElement('div');
   let index = ++product_amount;
@@ -87,6 +89,7 @@ function createNewProduct() {
 }
 
 function deleteProduct(index) {
+  if (fetching) return;
   let delPro = document.getElementById(`admin-products-${index}`);
   delPro.remove();
 }
@@ -117,28 +120,28 @@ async function updateProducts() {
         },
       ] = ele.children[index].children[0].children;
       if (name.value === '') {
-        return handlerError('名稱不可空白');
+        throw new Error('名稱不可空白');
       }
       if (
         total.value === '' ||
         isNaN(Number(total.value)) ||
         Number(total.value) < 0
       ) {
-        return handlerError(`商品名稱"${name.value}"的"總量"必須是數字`);
+        throw new Error(`商品名稱"${name.value}"的"總量"必須是數字`);
       }
       if (
         purchased.value === '' ||
         isNaN(Number(purchased.value)) ||
         Number(purchased.value) < 0
       ) {
-        return handlerError(`商品名稱"${name.value}"的"已購買量"必須是數字`);
+        throw new Error(`商品名稱"${name.value}"的"已購買量"必須是數字`);
       }
       if (
         price.value === '' ||
         isNaN(Number(price.value)) ||
         Number(price.value) < 0
       ) {
-        return handlerError(`商品名稱"${name.value}"的"價格"必須是數字`);
+        throw new Error(`商品名稱"${name.value}"的"價格"必須是數字`);
       }
       newItems.push({
         name: name.value,
